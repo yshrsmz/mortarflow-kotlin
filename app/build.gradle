@@ -48,6 +48,7 @@ dependencies {
     kapt 'com.github.grandstaish.paperparcel:compiler:1.0.0-rc5'
 
     testCompile 'junit:junit:4.12'
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }
 
 repositories {
@@ -58,4 +59,6 @@ repositories {
 
 kapt {
     generateStubs = true
+}
+buildscript {
 }
