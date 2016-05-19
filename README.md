@@ -1,4 +1,4 @@
-MortarFlow Kotli
+MortarFlow Kotlin
 ===
 
 Mortar/Flow sample with kotlin
