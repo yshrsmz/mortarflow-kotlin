@@ -11,12 +11,10 @@ import nz.bradcampbell.paperparcel.PaperParcelable
  */
 @PaperParcel
 class MainScreen : ClassKey(), DaggerService.WithComponent, PaperParcelable {
-    override fun createComponent(parent: Any): Any {
-        if (parent !is AppComponent) {
-            throw IllegalArgumentException()
-        }
-
+    override fun <T> getComponent(): T {
+        throw UnsupportedOperationException()
     }
+
 
     interface Component {
         fun inject(view: MainView)

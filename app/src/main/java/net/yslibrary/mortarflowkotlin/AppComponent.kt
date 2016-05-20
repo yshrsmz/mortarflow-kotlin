@@ -1,6 +1,8 @@
 package net.yslibrary.mortarflowkotlin
 
 import dagger.Component
+import net.yslibrary.mortarflowkotlin.flow.InitialHistory
+import net.yslibrary.mortarflowkotlin.flow.PaperKeyParceler
 
 /**
  * Created by a12897 on 2016/05/19.
@@ -9,4 +11,8 @@ import dagger.Component
 @Component(modules = arrayOf(AppModule::class))
 interface AppComponent {
     fun inject(app: App)
+
+    fun initialHistory(): InitialHistory
+
+    fun keyParceler(): PaperKeyParceler
 }

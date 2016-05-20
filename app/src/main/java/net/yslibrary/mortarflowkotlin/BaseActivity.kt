@@ -5,8 +5,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import flow.Flow
-import flow.KeyDispatcher
-import net.yslibrary.mortarflowkotlin.flow.*
+import mortar.MortarScope
+import mortar.bundler.BundleServiceRunner
+import net.yslibrary.mortarflowkotlin.flow.DaggerService
+import net.yslibrary.mortarflowkotlin.flow.MortarService
+
 
 /**
  * Created by a12897 on 2016/05/19.
@@ -15,18 +18,16 @@ abstract class BaseActivity : AppCompatActivity() {
 
     abstract fun getDefaultKey(): Any
 
-    override fun attachBaseContext(newBase: Context) {
-        val appComponent = App.appComponent(newBase)
-        val scope = App.scope(newBase)
+    abstract fun getScopeName(): String
 
-        val keyChanger = CompositeKeyChanger()
-        keyChanger.addDispatcher(SceneKeyChanger.WithLayout::class, SceneKeyChanger(this));
+    override fun attachBaseContext(newBase: Context) {
+        val appContext = newBase.applicationContext
+        val appComponent = DaggerService.getDaggerComponent<AppComponent>(appContext)
+        val scope = getScope(appContext)
 
         val context = Flow.configure(newBase, this)
-                .keyParceler(PaperKeyParceler())
-                .dispatcher(KeyDispatcher.configure(this, keyChanger).build())
-                .addServicesFactory(DaggerService(appComponent))
                 .addServicesFactory(MortarService(scope))
+                .keyParceler(appComponent.keyParceler())
                 .defaultKey(getDefaultKey())
                 .install()
 
@@ -43,13 +44,15 @@ abstract class BaseActivity : AppCompatActivity() {
         setContentView(R.layout.activity_base)
     }
 
-    override fun onResume() {
-        super.onResume()
-        val appComponent = App.appComponent(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
+    private fun getScope(context: Context): MortarScope {
+        val parent = MortarScope.getScope(context)
+        var child = MortarScope.findChild(context, getScopeName())
+        if (child == null) {
+            child = parent.buildChild()
+                    .withService(BundleServiceRunner.SERVICE_NAME, BundleServiceRunner())
+                    .build(getScopeName())
+        }
+        return child
     }
 
     override fun onBackPressed() {

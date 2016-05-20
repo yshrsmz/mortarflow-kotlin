@@ -1,38 +1,34 @@
 package net.yslibrary.mortarflowkotlin.flow
 
-import android.content.Context
-import flow.Flow
 import flow.Services
 import flow.ServicesFactory
 import mortar.MortarScope
+import net.yslibrary.mortarflowkotlin.AppComponent
 
-class MortarService(private val rootScope: MortarScope) : ServicesFactory() {
-
+/**
+ * Created by a12897 on 2016/05/20.
+ */
+class MortarService(private val root: MortarScope) : ServicesFactory() {
     override fun bindServices(services: Services.Binder) {
         val key = services.getKey<Any>()
-        if (key !is WithScope) {
+        if (!root.hasService(key.toString())) {
             return
         }
 
-        val scopeName = key.javaClass.name
-        val parentScope = services.getService<MortarScope>(NAME) ?: rootScope
-        val childScope = parentScope.findChild(scopeName) ?: key.createScope(parentScope).build(scopeName)
-
-        services.bind(NAME, childScope)
+        if (key !is WithComponent) {
+            throw IllegalArgumentException("services must implement WithComponent")
+        }
+        val component: Any = key.getComponent(root.getService<AppComponent>(DaggerService.NAME))
+        val childScope = root.findChild(key.toString())
+        if (childScope == null) {
+            root.buildChild()
+                    .withService(DaggerService.NAME, component)
+                    .build(key.toString())
+        }
+        services.bind(DaggerService.NAME, component)
     }
 
-    override fun tearDownServices(services: Services) {
-        services.getService<MortarScope>(NAME)?.destroy()
-        super.tearDownServices(services)
-    }
-
-    interface WithScope {
-        fun createScope(parentScope: MortarScope): MortarScope.Builder
-    }
-
-    companion object {
-        const val NAME = "MortarScope"
-
-        fun <T> get(context: Context) = Flow.getService<T>(NAME, context)
+    interface WithComponent {
+        fun <T> getComponent(parent: T)
     }
 }
