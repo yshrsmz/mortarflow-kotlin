@@ -8,6 +8,7 @@ import flow.Flow
 import mortar.MortarScope
 import mortar.bundler.BundleServiceRunner
 import net.yslibrary.mortarflowkotlin.flow.DaggerService
+import net.yslibrary.mortarflowkotlin.flow.Dispatcher
 import net.yslibrary.mortarflowkotlin.flow.MortarService
 
 
@@ -16,48 +17,73 @@ import net.yslibrary.mortarflowkotlin.flow.MortarService
  */
 abstract class BaseActivity : AppCompatActivity() {
 
-    abstract fun getDefaultKey(): Any
+  lateinit protected var scope: MortarScope
 
-    abstract fun getScopeName(): String
+  abstract fun getDefaultKey(): Any
 
-    override fun attachBaseContext(newBase: Context) {
-        val appContext = newBase.applicationContext
-        val appComponent = DaggerService.getDaggerComponent<AppComponent>(appContext)
-        val scope = getScope(appContext)
+  abstract fun getScopeName(): String
 
-        val context = Flow.configure(newBase, this)
-                .addServicesFactory(MortarService(scope))
-                .keyParceler(appComponent.keyParceler())
-                .defaultKey(getDefaultKey())
-                .install()
 
-        super.attachBaseContext(context)
+  override fun getSystemService(name: String?): Any? {
+    if (scope.hasService(name)) {
+      return scope.getService(name)
     }
+    return super.getSystemService(name)
+  }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        Flow.onNewIntent(intent, this)
-    }
+  override fun attachBaseContext(newBase: Context) {
+    val appContext = newBase.applicationContext
+    val appComponent = DaggerService.getDaggerComponent<AppComponent>(appContext)
+    scope = getScope(appContext)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_base)
-    }
+    val context = Flow.configure(newBase, this)
+        .addServicesFactory(MortarService(scope))
+        .keyParceler(appComponent.keyParceler())
+        .defaultKey(getDefaultKey())
+        .dispatcher(Dispatcher(this))
+        .install()
 
-    private fun getScope(context: Context): MortarScope {
-        val parent = MortarScope.getScope(context)
-        var child = MortarScope.findChild(context, getScopeName())
-        if (child == null) {
-            child = parent.buildChild()
-                    .withService(BundleServiceRunner.SERVICE_NAME, BundleServiceRunner())
-                    .build(getScopeName())
-        }
-        return child
-    }
+    super.attachBaseContext(context)
+  }
 
-    override fun onBackPressed() {
-        if (!Flow.get(this).goBack()) {
-            super.onBackPressed()
-        }
+  override fun onNewIntent(intent: Intent?) {
+    super.onNewIntent(intent)
+    Flow.onNewIntent(intent, this)
+  }
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    BundleServiceRunner.getBundleServiceRunner(this).onCreate(savedInstanceState)
+    setContentView(R.layout.activity_base)
+  }
+
+  override fun onSaveInstanceState(outState: Bundle?) {
+    super.onSaveInstanceState(outState)
+    BundleServiceRunner.getBundleServiceRunner(this).onSaveInstanceState(outState)
+  }
+
+  override fun onDestroy() {
+    if (isFinishing) {
+      val activityScope = MortarScope.findChild(applicationContext, getScopeName())
+      activityScope?.let { it.destroy() }
     }
+    super.onDestroy()
+  }
+
+  private fun getScope(context: Context): MortarScope {
+    val parent = MortarScope.getScope(context)
+    var child = MortarScope.findChild(context, getScopeName())
+    if (child == null) {
+      child = parent.buildChild()
+          .withService(BundleServiceRunner.SERVICE_NAME, BundleServiceRunner())
+          .build(getScopeName())
+    }
+    return child
+  }
+
+  override fun onBackPressed() {
+    if (!Flow.get(this).goBack()) {
+      super.onBackPressed()
+    }
+  }
 }
