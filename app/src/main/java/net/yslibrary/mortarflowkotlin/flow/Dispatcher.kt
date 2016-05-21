@@ -13,28 +13,29 @@ import net.yslibrary.mortarflowkotlin.R
  * https://github.com/Kritarie/FlowSample/blob/master/app/src/main/java/net/seanamos/flowsample/ui/FlowSampleActivity.java
  */
 class Dispatcher(private val activity: Activity) : flow.Dispatcher {
-    override fun dispatch(traversal: Traversal, callback: TraversalCallback) {
-        val frame = activity.findViewById(R.id.app_container) as ViewGroup
-        val history = traversal.origin
-        val destination = traversal.destination.top<Any>()
 
-        if (destination !is WithLayout) {
-            throw IllegalArgumentException("destination must implement WithLayout")
-        }
+  override fun dispatch(traversal: Traversal, callback: TraversalCallback) {
+    val frame = activity.findViewById(R.id.app_container) as ViewGroup
+    val history = traversal.origin
+    val destination = traversal.destination.top<Any>()
 
-        val incomingContext = traversal.createContext(destination, activity)
-        val incomingView = LayoutInflater.from(incomingContext).inflate(destination.getLayoutId(), frame, false)
-        traversal.getState(destination).restore(incomingView)
-
-        history?.let { traversal.getState(it.top()).save(frame.getChildAt(0)) }
-
-        frame.removeAllViews()
-        frame.addView(incomingView)
-
-        callback.onTraversalCompleted()
+    if (destination !is WithLayout) {
+      throw IllegalArgumentException("destination must implement WithLayout")
     }
 
-    interface WithLayout {
-        @LayoutRes fun getLayoutId(): Int
-    }
+    val incomingContext = traversal.createContext(destination, activity)
+    val incomingView = LayoutInflater.from(incomingContext).inflate(destination.getLayoutId(), frame, false)
+    traversal.getState(destination).restore(incomingView)
+
+    history?.let { traversal.getState(it.top()).save(frame.getChildAt(0)) }
+
+    frame.removeAllViews()
+    frame.addView(incomingView)
+
+    callback.onTraversalCompleted()
+  }
+
+  interface WithLayout {
+    @LayoutRes fun getLayoutId(): Int
+  }
 }
