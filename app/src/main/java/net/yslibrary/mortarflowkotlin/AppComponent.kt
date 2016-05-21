@@ -1,5 +1,6 @@
 package net.yslibrary.mortarflowkotlin
 
+import android.app.Application
 import dagger.Component
 import net.yslibrary.mortarflowkotlin.flow.InitialHistory
 import net.yslibrary.mortarflowkotlin.flow.PaperKeyParceler
@@ -10,9 +11,11 @@ import net.yslibrary.mortarflowkotlin.flow.PaperKeyParceler
 @AppScope
 @Component(modules = arrayOf(AppModule::class))
 interface AppComponent {
-    fun inject(app: App)
+  fun inject(app: App)
 
-    fun initialHistory(): InitialHistory
+  fun initialHistory(): InitialHistory
 
-    fun keyParceler(): PaperKeyParceler
+  fun keyParceler(): PaperKeyParceler
+
+  fun app(): Application
 }

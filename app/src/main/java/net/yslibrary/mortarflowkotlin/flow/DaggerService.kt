@@ -7,18 +7,18 @@ import android.content.Context
  */
 class DaggerService {
 
-    companion object {
-        @JvmStatic val NAME = DaggerService::class.simpleName
-        @JvmStatic fun <T> getDaggerComponent(context: Context) = context.getSystemService(NAME) as T
-        @JvmStatic fun <T> createComponent(context: Context): T {
-            if (context !is WithComponent) {
-                throw IllegalArgumentException("context should implement WithComponent interface")
-            }
-            return context.getComponent()
-        }
+  companion object {
+    @JvmStatic val NAME = DaggerService::class.simpleName
+    @JvmStatic fun <T> getDaggerComponent(context: Context) = context.getSystemService(NAME) as T
+    @JvmStatic fun <T> createComponent(context: Context): T {
+      if (context !is WithComponent) {
+        throw IllegalArgumentException("context should implement WithComponent interface")
+      }
+      return context.getComponent()
     }
+  }
 
-    interface WithComponent {
-        fun <T> getComponent(): T
-    }
+  interface WithComponent {
+    fun <T> getComponent(): T
+  }
 }
