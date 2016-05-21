@@ -20,7 +20,7 @@ class MainView : FrameLayout {
 
   @JvmOverloads
   constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) : super(context, attrs, defStyle) {
-    presenter = DaggerService.getFlowComponent<MainScreen.Component>(context)!!.presenter();
+    presenter = DaggerService.getComponentForFlow<MainScreen.Component>(context)!!.presenter();
   }
 
   override fun onAttachedToWindow() {

@@ -13,7 +13,7 @@ class MortarService(private val root: MortarScope) : ServicesFactory() {
   override fun bindServices(services: Services.Binder) {
     val key = services.getKey<MortarService.ComponentFactory<Any>>()
 
-    if (!root.hasService(key.toString())) {
+    if (root.hasService(key.toString())) {
       return
     }
 

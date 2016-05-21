@@ -33,7 +33,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
   override fun attachBaseContext(newBase: Context) {
     val appContext = newBase.applicationContext
-    val appComponent = DaggerService.getDaggerComponent<AppComponent>(appContext)
+    val appComponent = DaggerService.getComponentForContext<AppComponent>(appContext)
     scope = getScope(appContext)
 
     val context = Flow.configure(newBase, this)
