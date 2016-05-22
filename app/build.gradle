@@ -2,64 +2,66 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+  compileSdkVersion 23
+  buildToolsVersion "23.0.3"
 
-    defaultConfig {
-        applicationId "net.yslibrary.mortarflowkotlin"
-        minSdkVersion 19
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+  defaultConfig {
+    applicationId "net.yslibrary.mortarflowkotlin"
+    minSdkVersion 19
+    targetSdkVersion 23
+    versionCode 1
+    versionName "1.0"
+  }
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-    }
-    dataBinding {
-        enabled = true
-    }
+  }
+  sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
+  }
+  dataBinding {
+    enabled = true
+  }
 }
 
 ext.support_lib_version = '23.4.0'
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
-    compile "com.android.support:appcompat-v7:$support_lib_version"
-    compile "com.android.support:design:$support_lib_version"
-    compile "com.android.support:support-v4:$support_lib_version"
-    compile "com.android.support:recyclerview-v7:$support_lib_version"
-    kapt 'com.google.guava:guava:19.0'
-    kapt 'com.android.databinding:compiler:2.1.0'
+  compile "com.android.support:appcompat-v7:$support_lib_version"
+  compile "com.android.support:design:$support_lib_version"
+  compile "com.android.support:support-v4:$support_lib_version"
+  compile "com.android.support:recyclerview-v7:$support_lib_version"
+  kapt 'com.google.guava:guava:19.0'
+  kapt 'com.android.databinding:compiler:2.1.0'
 
-    compile 'com.squareup.flow:flow:1.0.0-alpha'
-    compile 'com.squareup.mortar:mortar:0.20'
+  compile 'com.squareup.flow:flow:1.0.0-alpha'
+  compile 'com.squareup.mortar:mortar:0.20'
 
-    compile 'com.google.dagger:dagger:2.4'
-    kapt 'com.google.dagger:dagger-compiler:2.4'
-    provided 'org.glassfish:javax.annotation:10.0-b28'
+  compile 'com.google.dagger:dagger:2.4'
+  kapt 'com.google.dagger:dagger-compiler:2.4'
+  provided 'org.glassfish:javax.annotation:10.0-b28'
 
-    compile 'com.github.grandstaish.paperparcel:paperparcel:1.0.0-rc5'
-    compile 'com.github.grandstaish.paperparcel:paperparcel-kotlin:1.0.0-rc5'
-    kapt 'com.github.grandstaish.paperparcel:compiler:1.0.0-rc5'
+  compile 'com.github.grandstaish.paperparcel:paperparcel:1.0.0-rc5'
+  compile 'com.github.grandstaish.paperparcel:paperparcel-kotlin:1.0.0-rc5'
+  kapt 'com.github.grandstaish.paperparcel:compiler:1.0.0-rc5'
 
-    testCompile 'junit:junit:4.12'
-    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+  compile 'com.jakewharton.timber:timber:4.1.2'
+
+  testCompile 'junit:junit:4.12'
+  compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }
 
 repositories {
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
+  mavenCentral()
+  maven { url 'https://jitpack.io' }
 }
 
 
 kapt {
-    generateStubs = true
+  generateStubs = true
 }
 buildscript {
 }
