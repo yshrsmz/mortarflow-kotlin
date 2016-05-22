@@ -4,8 +4,10 @@ import android.content.Context
 import android.databinding.DataBindingUtil
 import android.util.AttributeSet
 import android.widget.FrameLayout
+import flow.Flow
 import net.yslibrary.mortarflowkotlin.databinding.ViewMainBinding
 import net.yslibrary.mortarflowkotlin.flow.DaggerService
+import net.yslibrary.mortarflowkotlin.sub.SubScreen
 import javax.inject.Inject
 
 /**
@@ -20,7 +22,7 @@ class MainView : FrameLayout, MainContract.View {
 
   @JvmOverloads
   constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) : super(context, attrs, defStyle) {
-    presenter = DaggerService.getComponentForFlow<MainScreen.Component>(context)!!.presenter();
+    DaggerService.getComponentForFlow<MainScreen.Component>(context)!!.inject(this)
   }
 
   override fun onAttachedToWindow() {
@@ -35,6 +37,10 @@ class MainView : FrameLayout, MainContract.View {
 
   override fun onFinishInflate() {
     super.onFinishInflate()
-    binding.toNext.setOnClickListener { view -> }
+    binding.toNext.setOnClickListener { view -> presenter.onToNextClicked() }
+  }
+
+  override fun toSubScreen(screen: SubScreen) {
+    Flow.get(this).set(screen)
   }
 }
