@@ -11,7 +11,7 @@ import javax.inject.Inject
 /**
  * Created by a12897 on 2016/05/19.
  */
-class MainView : FrameLayout {
+class MainView : FrameLayout, MainContract.View {
 
   @field:Inject
   lateinit var presenter: MainPresenter
@@ -35,5 +35,6 @@ class MainView : FrameLayout {
 
   override fun onFinishInflate() {
     super.onFinishInflate()
+    binding.toNext.setOnClickListener { view -> }
   }
 }
