@@ -19,13 +19,6 @@ class DaggerService {
     @JvmStatic inline fun <reified T> getComponentForFlow(view: View) {
       return getComponentForFlow(view.context)
     }
-
-    @JvmStatic fun <T> createComponent(context: Context): T {
-      if (context !is WithComponent) {
-        throw IllegalArgumentException("context should implement WithComponent interface")
-      }
-      return context.getComponent()
-    }
   }
 
   interface WithComponent {
